@@ -1,0 +1,26 @@
+runtime: python39
+entrypoint: python main.py
+
+env_variables:
+  GEMINI_MODEL: "gemini-pro"
+  # Note: We'll set GOOGLE_API_KEY in Cloud Secrets
+
+# Use a basic instance to stay within free tier
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+
+# Health check
+health_check:
+  enable_health_check: True
+  check_interval_sec: 300
+  timeout_sec: 300
+
+# Skip files we don't need
+skip_files:
+- ^(.*/)?\..*$    # Hidden files
+- ^(.*/)?.*\.log$  # Log files
+- ^(.*/)?tests/.*$ # Test files
+- ^(.*/)?memory_data/.*$ # Local memory data
