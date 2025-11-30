@@ -25,7 +25,7 @@ def main():
     print("🤖 Multi-Agent Learning System for B.Tech Students")
     print("="*70)
     
-    # Current active student (in a real app, you'd have user authentication)
+    # Current active student
     current_student = None
     
     while True:
@@ -39,8 +39,7 @@ def main():
         choice = input("\nEnter your choice (1-5): ").strip()
         
         if choice == '1':
-            new_student_onboarding()
-            current_student = 'new_student_001'  # Simplified for demo
+            current_student = new_student_onboarding()
             
         elif choice == '2':
             if not current_student:
@@ -106,7 +105,7 @@ def new_student_onboarding():
     
     print(f"\n⏳ Creating your personalized learning plan...")
     
-    # Use coordinator to onboard student (sequential agents)
+    # Use coordinator to onboard student
     result = coordinator.onboard_new_student(student_data)
     
     if result and result['onboarding_status'] == 'completed':
@@ -114,17 +113,7 @@ def new_student_onboarding():
         print(f"🎯 Student ID: {result['student_id']}")
         print(f"📚 Subjects: {len(subjects)} subjects configured")
         print(f"⏰ Study hours: {available_hours} hours per week")
-        print(f"📅 Study plan: Generated successfully")
         
-        # Show sample study plan
-        study_plan = result['study_plan']
-        if study_plan and 'weekly_overview' in study_plan:
-            print(f"\n📋 YOUR WEEKLY PLAN PREVIEW:")
-            weekly_schedule = study_plan['weekly_overview'].get('weekly_schedule', {})
-            for day in list(weekly_schedule.keys())[:3]:  # Show first 3 days
-                tasks = weekly_schedule[day][:2]  # Show first 2 tasks
-                print(f"   {day}: {', '.join(tasks)}")
-            
         return result['student_id']
     else:
         print("❌ Onboarding failed. Please try again.")
@@ -166,18 +155,8 @@ def view_progress_report(student_id: str):
     
     if insights:
         print(f"\n💡 RECOMMENDATIONS:")
-        for insight in insights[:3]:  # Show top 3 insights
+        for insight in insights[:3]:
             print(f"   • {insight}")
-    
-    # Show recent sessions
-    recent_sessions = progress.get('recent_sessions', [])
-    if recent_sessions:
-        print(f"\n📝 RECENT SESSIONS:")
-        for session in recent_sessions[-3:]:  # Last 3 sessions
-            date = session['timestamp'][:10]
-            subjects = ', '.join(session['subjects_studied'])
-            duration = session['duration_minutes']
-            print(f"   {date}: {subjects} ({duration}min)")
 
 def run_all_tests():
     """Run all agent tests to verify system functionality"""
@@ -196,16 +175,12 @@ def run_all_tests():
     
     for test_name in tests_to_run:
         try:
-            # Import and run each test
             module = __import__(f'tests.{test_name}', fromlist=[''])
             if hasattr(module, 'main'):
                 print(f"\n🔍 Running {test_name}...")
                 success = module.main()
                 if not success:
                     all_passed = False
-            else:
-                print(f"❌ {test_name} has no main function")
-                all_passed = False
         except Exception as e:
             print(f"❌ Error running {test_name}: {e}")
             all_passed = False
@@ -221,5 +196,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n\n👋 Session interrupted. Goodbye!")
     except Exception as e:
-        logger.error(f"Application error: {e}")
         print(f"\n❌ An error occurred: {e}")
